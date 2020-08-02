@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1589012104093.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "11FE4E50",
+    "lastKnownWriteTime" : 3618396272525010290,
+    "last_content_update" : 1589012104093,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "187F9763",
+        "caption" : "emotions_consolidated",
+        "contentUrl" : "grid_resource/gridviewer.html?env=_rs_no_env&obj=emotions_consolidated&cache_key=187F9763",
+        "displayedObservations" : "8",
+        "environment" : "_rs_no_env",
+        "object" : "emotions_consolidated",
+        "preview" : "0",
+        "totalObservations" : "8",
+        "variables" : "1"
+    },
+    "relative_order" : 9,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

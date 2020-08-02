@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1589005893330.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "80F2409A",
+    "lastKnownWriteTime" : 0,
+    "last_content_update" : 1589005893330,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "7775E9C6",
+        "caption" : "diff_mins_df",
+        "contentUrl" : "grid_resource/gridviewer.html?env=_rs_no_env&obj=diff_mins_df&cache_key=7775E9C6",
+        "displayedObservations" : "24",
+        "environment" : "_rs_no_env",
+        "object" : "diff_mins_df",
+        "preview" : "0",
+        "totalObservations" : "24",
+        "variables" : "2"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

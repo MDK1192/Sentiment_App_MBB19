@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1589017567176.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "52DA37BE",
+    "lastKnownWriteTime" : 7883925266360327200,
+    "last_content_update" : 1589017567176,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "AB1D90CE",
+        "caption" : "pol_detail",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=pol_detail&cache_key=AB1D90CE",
+        "displayedObservations" : 125,
+        "environment" : "",
+        "object" : "pol_detail",
+        "preview" : 0,
+        "totalObservations" : 125,
+        "variables" : 16
+    },
+    "relative_order" : 10,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}
