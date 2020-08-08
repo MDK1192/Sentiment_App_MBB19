@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1596883425695.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "B8DE6FCF",
+    "lastKnownWriteTime" : 8388271465511919737,
+    "last_content_update" : 1596883425695,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "id" : "b1d4837e26d14d55bc1667160267a324",
+        "name" : "polarity_rating_1",
+        "title" : "polarity_rating_1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 10,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "object_explorer"
+}

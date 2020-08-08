@@ -1,21 +1,154 @@
 #Functions for estimating the quality of Polarity analysis
 
-get_polarity_evaluiation_binary <- function(){
+library(sentimentr)
+library(SentimentAnalysis)
+library(tm)
+
+get_polarity_evaluation_binary <- function(n = 5){
   
-  data <- read.csv("SemiStruk_MBB19/IMDB Dataset.csv")
-  getwd()
+  
+  data <- read.csv("SemiStruk_MBB19/Dataset1.csv")
   
   
+  #start to clean data using a NLP-Pipeline approach
+  data <- data.frame("Text"= data$review, "polarity" = data$sentiment)
   
+  #Take care of non-UTF-8 Characters, replace them with ''
+  iconv(data, "UTF-8", "UTF-8",sub='')
+  data$Text <- as.character(data$Text)
+  
+  #iterate over textdata; remove twitterlike textelements ('@User123....'); transform text into UTF-8
+  for(i in 1:nrow(data)){
+    data$Text[i] <- gsub("@\\w+ *", "", data$Text[i])
+    Encoding(data$Text[i]) <- "UTF-8"
+  }
+  
+  #Normalize data (remove Punctuation, Numbers, Capitalization, "/()_-")
+  data <- data.frame("Text" = as.character(removePunctuation(removeNumbers(tolower(data$Text)))),  "polarity" = data$polarity)
+  data$Text <- as.character(data$Text)
+  for(i in 1:nrow(data)){
+    #remove https/http addresses from tweets
+    data$Text[i] <- gsub("http\\w+ *", "", data$Text[i])
+    data$Text[i] <- gsub("https\\w+ *", "", data$Text[i])
+    #remove non-ASCII characters
+    data$Text[i] <- gsub("[^\x01-\x7F]", "", data$Text[i])
+    #remove stopwords
+    # data$Text[i] <- tryCatch({rm_stopwords(data$Text[i],unlist = FALSE , separate = FALSE)},
+    #                                 error=function(cond){
+    #                                   Text <- "this tweet conflicts with utf8 and will be deleted"
+    #                                   return(Text)})
+  }
+  
+  data_pos_pop <- data[data$polarity == "positive",]
+  data_neg_pop <- data[data$polarity == "negative",]
+  sample_pos <- list()
+  sample_neg <- list()
+  polarity_pos <- list()
+  polarity_neg <- list()
+  vec_polarity_pos <- c(1:n)
+  vec_polarity_neg <- c(1:n)
+  for(i in 1:n){
+    sample_pos[[i]] <- as.data.frame(data_pos_pop[sample(nrow(data_pos_pop), 100, replace = FALSE),])
+    sample_neg[[i]] <- as.data.frame(data_neg_pop[sample(nrow(data_neg_pop), 100, replace = FALSE),])
+    polarity_pos[[i]] <- analyzeSentiment(sample_pos[[i]]$Text, language = "english", removeStopwords = TRUE, stemming = TRUE)
+    polarity_neg[[i]] <- analyzeSentiment(sample_neg[[i]]$Text, language = "english", removeStopwords = TRUE, stemming = TRUE)
+    vec_polarity_pos[i] <- mean(polarity_pos[[i]]$SentimentGI)
+    vec_polarity_neg[i] <- mean(polarity_neg[[i]]$SentimentGI)
+  }
+  
+  print(paste0("durchschnittliche Polarität der positiven Reviews: ", mean(vec_polarity_pos)))
+  print(paste0("durchschnittliche Polarität der negativen Reviews: ", mean(vec_polarity_neg)))
+  
+  t.test(vec_polarity_neg, vec_polarity_pos)
 }
 
 
-
-get_polarity_evaluiation_multiscore <- function(){
+get_polarity_evaluation_multiscore <- function(n = 5){
   
   data <- read.csv("SemiStruk_MBB19/Dataset2.csv")
+
   
+  #start to clean data using a NLP-Pipeline approach
+  data <- data.frame("Text"= data$Review.Text, "rating" = data$Rating)
   
+  #Take care of non-UTF-8 Characters, replace them with ''
+  iconv(data, "UTF-8", "UTF-8",sub='')
+  data$Text <- as.character(data$Text)
+  
+  #iterate over textdata; remove twitterlike textelements ('@User123....'); transform text into UTF-8
+  for(i in 1:nrow(data)){
+    data$Text[i] <- gsub("@\\w+ *", "", data$Text[i])
+    Encoding(data$Text[i]) <- "UTF-8"
+  }
+  
+  #Normalize data (remove Punctuation, Numbers, Capitalization, "/()_-")
+  data <- data.frame("Text" = as.character(removePunctuation(removeNumbers(tolower(data$Text)))),  "rating" = data$rating)
+  data$Text <- as.character(data$Text)
+  for(i in 1:nrow(data)){
+    #remove https/http addresses from tweets
+    data$Text[i] <- gsub("http\\w+ *", "", data$Text[i])
+    data$Text[i] <- gsub("https\\w+ *", "", data$Text[i])
+    #remove non-ASCII characters
+    data$Text[i] <- gsub("[^\x01-\x7F]", "", data$Text[i])
+    #remove stopwords
+    # data$Text[i] <- tryCatch({rm_stopwords(data$Text[i],unlist = FALSE , separate = FALSE)},
+    #                                 error=function(cond){
+    #                                   Text <- "this tweet conflicts with utf8 and will be deleted"
+    #                                   return(Text)})
+  }
+  data_rating_1 <- data[data$rating == 1,]
+  data_rating_2 <- data[data$rating == 2,]
+  data_rating_3 <- data[data$rating == 3,]
+  data_rating_4 <- data[data$rating == 4,]
+  data_rating_5 <- data[data$rating == 5,]
+
+  sample_rating_1 <- list()
+  sample_rating_2 <- list()  
+  sample_rating_3 <- list()
+  sample_rating_4 <- list()
+  sample_rating_5 <- list()
+  
+  polarity_rating_1 <- list()
+  polarity_rating_2 <- list()  
+  polarity_rating_3 <- list()
+  polarity_rating_4 <- list()
+  polarity_rating_5 <- list()
+  
+  vec_polarity_rating_1 <- c(1:n)
+  vec_polarity_rating_2 <- c(1:n)
+  vec_polarity_rating_3 <- c(1:n)
+  vec_polarity_rating_4 <- c(1:n)
+  vec_polarity_rating_5 <- c(1:n)
+  
+  for(i in 1:n){
+    sample_rating_1[[i]] <- as.data.frame(data_rating_1[sample(nrow(data_rating_1), 100, replace = FALSE),])
+    sample_rating_2[[i]] <- as.data.frame(data_rating_2[sample(nrow(data_rating_2), 100, replace = FALSE),])
+    sample_rating_3[[i]] <- as.data.frame(data_rating_3[sample(nrow(data_rating_3), 100, replace = FALSE),])
+    sample_rating_4[[i]] <- as.data.frame(data_rating_4[sample(nrow(data_rating_4), 100, replace = FALSE),])
+    sample_rating_5[[i]] <- as.data.frame(data_rating_5[sample(nrow(data_rating_5), 100, replace = FALSE),])
+    
+    polarity_rating_1[[i]] <- analyzeSentiment(sample_rating_1[[i]]$Text, language = "english", removeStopwords = TRUE, stemming = TRUE)
+    polarity_rating_2[[i]] <- analyzeSentiment(sample_rating_2[[i]]$Text, language = "english", removeStopwords = TRUE, stemming = TRUE)
+    polarity_rating_3[[i]] <- analyzeSentiment(sample_rating_3[[i]]$Text, language = "english", removeStopwords = TRUE, stemming = TRUE)
+    polarity_rating_4[[i]] <- analyzeSentiment(sample_rating_4[[i]]$Text, language = "english", removeStopwords = TRUE, stemming = TRUE)
+    polarity_rating_5[[i]] <- analyzeSentiment(sample_rating_5[[i]]$Text, language = "english", removeStopwords = TRUE, stemming = TRUE)
+    
+    vec_polarity_rating_1[i] <- mean(polarity_rating_1[[i]]$SentimentGI, na.rm= T)
+    vec_polarity_rating_2[i] <- mean(polarity_rating_2[[i]]$SentimentGI, na.rm= T)
+    vec_polarity_rating_3[i] <- mean(polarity_rating_3[[i]]$SentimentGI, na.rm= T)
+    vec_polarity_rating_4[i] <- mean(polarity_rating_4[[i]]$SentimentGI, na.rm= T)
+    vec_polarity_rating_5[i] <- mean(polarity_rating_5[[i]]$SentimentGI, na.rm= T)
+    
+    }
+  browser()
+  
+  print(paste0("durchschnittliche Polarität der Reviews Stufe 5: ", mean(vec_polarity_rating_5)))
+  print(paste0("durchschnittliche Polarität der Reviews Stufe 4: ", mean(vec_polarity_rating_4)))
+  print(paste0("durchschnittliche Polarität der Reviews Stufe 3: ", mean(vec_polarity_rating_3)))
+  print(paste0("durchschnittliche Polarität der Reviews Stufe 2: ", mean(vec_polarity_rating_2)))
+  print(paste0("durchschnittliche Polarität der Reviews Stufe 1: ", mean(vec_polarity_rating_1)))
+  
+  #t.test(vec_polarity_neg, vec_polarity_pos)
   
 }
   
