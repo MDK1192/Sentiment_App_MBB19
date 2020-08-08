@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1588951120990.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "371890898",
+    "id" : "FAF50FD7",
+    "lastKnownWriteTime" : 1596875263,
+    "last_content_update" : 1596875263975,
+    "path" : "~/GitHub/Sentiment_App_MBB19/SemiStruk_MBB19/app.R",
+    "project_path" : "SemiStruk_MBB19/app.R",
+    "properties" : {
+        "cursorPosition" : "267,4",
+        "scrollLine" : "237"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

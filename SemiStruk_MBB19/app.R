@@ -265,6 +265,7 @@ server <- function(input, output, session) {
         geom_line() +
         labs(title = "Overview Tweet frequency in the last 3 Hours",x = "Minutes from Now", y="Frequency")
     })
+    
   })
 }
 
