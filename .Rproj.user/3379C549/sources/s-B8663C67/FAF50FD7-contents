@@ -19,7 +19,6 @@ library(qdap)
 library(lubridate)
 library(readxl)
 library(tidytext)
-library(wordcloud2) 
 library(lubridate)
 library(ggplot2)
 library(rtweet)
@@ -33,8 +32,8 @@ ui <- dashboardPage(
     sidebarMenu(
       menuItem("Landing Page", tabName = "landingpage", icon = icon("th")),
       menuItem("Sentiment_Overview", tabName = "sentiment_overview", icon = icon("th")),
-      menuItem("Sentiment_Summarized", tabName = "sentiment_summarized", icon = icon("th"))
-      #menuItem("Other Visualizations", tabName = "visualizations", icon = icon("dashboard"))
+      menuItem("Sentiment_Summarized", tabName = "sentiment_summarized", icon = icon("th")),
+      menuItem("Sentiment_Detailed", tabName = "sentiment_detailed", icon = icon("th"))
     )
   ),
   #Body Content
@@ -46,7 +45,6 @@ ui <- dashboardPage(
                   box(width = 6, fileInput("file", label = h3("Upload credentials in .xlsx Format"))),
                   box(width = 6,textInput("hashtag", label = h3("Enter Searchterm"), value = "")),
                   box(width = 12, sliderInput("numberslider", label = h3("Enter Number of Tweets"), min = 100, max = 10000, value = 1000))),
-                  
               box(width = 12,
                   box(width = 6, actionButton("loadButton", label = "Load Data", width = '100%')),
                   box(width = 6, actionButton("startButton", label = "Start Sentiment Analysis", width = '100%'))),
@@ -61,18 +59,12 @@ ui <- dashboardPage(
       tabItem(tabName = "sentiment_summarized",
               h2("Sentiments Summarized"),
               box(width = 12,plotOutput("polarity")),
-              box(width = 12,plotOutput("emotionscount")),
-              box(width = 12,plotlyOutput("polaritydetail")),
-              box(width = 12,plotlyOutput("polaritytime")),
-              #box(width = 12,plotlyOutput("emotionsdetail"))
+              box(width = 12,plotOutput("emotionscount"))
               ),
-      tabItem(tabName = "visualizations",
-              h2("Visualizations"),
-              box(width = 12,
-                #box(width = 6,plotOutput("wordcloud")),
-                box(width = 6,wordcloud2Output("wordcloud")),
-                box(width = 6,plotOutput("wordcount"))),
-              box(width = 12,plotOutput("timeplot"))
+      tabItem(tabName = "sentiment_detailed",
+              h2("Sentiments Summarized"),
+              box(width = 12,plotlyOutput("polaritydetail")),
+              box(width = 12,plotlyOutput("polaritytime"))
       )
     )
   )
@@ -134,7 +126,7 @@ server <- function(input, output, session) {
       #remove non-ASCII characters
       tweets_data$Text[i] <- gsub("[^\x01-\x7F]", "", tweets_data$Text[i])
       #remove stopwords
-      tweets_data$Text[i] <- tryCatch({rm_stopwords(tweets_data$Text[i], stopwords = qdapDictionaries::Top25Words,
+      tweets_data$Text[i] <- tryCatch({rm_stopwords(tweets_data$Text[i], stopwords = qdapDictionaries::Top200Words,
                                                     unlist = FALSE , separate = FALSE)},
                                       error=function(cond){
                                       Text <- "this tweet conflicts with utf8 and will be deleted"
@@ -227,35 +219,6 @@ server <- function(input, output, session) {
       
     })
     
-    #plot wordcloud for visualitation of most frequent words
-    output$wordcloud <- renderWordcloud2({
-      wordcount_vec <- c()
-      for(i in 1:nrow(tweets_data)){
-        wordcount_vec <- paste0(wordcount_vec, tweets_data$Text[i])
-      }
-      wordcount_vec <- strsplit(wordcount_vec, " ")
-      wordcounts <- data.frame(table(wordcount_vec))
-      wordcounts <- wordcounts[wordcounts$wordcount_vec != "",]
-      wordcounts <- wordcounts[wordcounts$Freq > 15,]
-      names(wordcounts) <- c("word", "freq")
-      wordcloud2(wordcounts)
-    })
-    
-    # output$wordcount <- renderPlot({
-    #   wordcount_vec <- c()
-    #   for(i in 1:nrow(tweets_data)){
-    #     wordcount_vec <- paste0(wordcount_vec, tweets_data$Text[i])
-    #   }
-    #   wordcount_vec <- strsplit(wordcount_vec, " ")
-    #   wordcounts <- data.frame(table(wordcount_vec))
-    #   wordcounts <- wordcounts[wordcounts$Freq > 15,]
-    #   wordcounts <- wordcounts[wordcounts$wordcount_vec != "",]
-    #   ggplot(wordcounts, aes(x=reorder(wordcount_vec, as.numeric(Freq)), y=as.numeric(Freq))) +
-    #     geom_bar(stat="identity") +
-    #     coord_flip() +
-    #     labs(title = "Overview over most common Words", x= "Word",  y= "Frequency")
-    # })
-    
     #plot post frequency of tweets for deeper insights
     output$timeplot <- renderPlot({
       diff_mins <- as.numeric(difftime(as.POSIXlt(Sys.time(),tz="UTC"),data_twitter$created, "mins"))
@@ -268,12 +231,6 @@ server <- function(input, output, session) {
     
   })
 }
-
-#IMDB Movie Reviews Dataset
-
-#This large movie dataset contains a collection of about 50,000 movie reviews from IMDB. In this dataset, only highly polarised reviews are being considered. The positive and negative reviews are even in number; however, the negative review has a score of ≤ 4 out of 10, and the positive review has a score of ≥ 7 out of 10.
-
-
 
 shinyApp(ui, server)
 

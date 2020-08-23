@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1597828378359.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "F781B84A",
+    "lastKnownWriteTime" : 7599382801877576758,
+    "last_content_update" : 1597828378359,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "8BCCEA74",
+        "caption" : "polarity_scores",
+        "contentUrl" : "grid_resource/gridviewer.html?env=_rs_no_env&obj=polarity_scores&cache_key=8BCCEA74",
+        "displayedObservations" : "8",
+        "environment" : "_rs_no_env",
+        "expression" : "polarity_scores",
+        "object" : "polarity_scores",
+        "preview" : "0",
+        "totalObservations" : "8",
+        "variables" : "14"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 8,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}
