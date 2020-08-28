@@ -1,0 +1,192 @@
+#
+# This is a Shiny web application. You can run the application by clicking
+# the 'Run App' button above.
+#
+# Find out more about building applications with Shiny here:
+#
+#    http://shiny.rstudio.com/
+#
+#Sys.setenv(JAVA_HOME='C:\\Program Files\\Java\\jdk-12.0.2')
+library(shiny)
+library(twitteR)
+library(shinydashboard)
+library(DT)
+library(sentimentr)
+library(SentimentAnalysis)
+library(dplyr)
+library(plotly)
+library(tm)
+
+
+
+ui <- dashboardPage(
+  #Header
+  dashboardHeader(title = "Sentiment-Dashboard"),
+  dashboardSidebar(),
+  #Body Content
+  dashboardBody(
+    box(width = 12, 
+        box(width = 9,textInput("hashtag", label = h3("Enter Twitter Hashtag"), value = "")),
+        box(width = 3,textInput("number", label = h3("Enter Number"), value = ""))),
+    box(width = 12, 
+        box(width = 6, actionButton("loadButton", label = "Load Data", width = '100%')),
+        box(width = 6, actionButton("startButton", label = "Start Sentiment Analysis", width = '100%'))),
+    box(width = 12,DTOutput("table")),
+    box(width = 12,plotOutput("plot"))
+  )
+)
+
+server <- function(input, output, session) {
+  
+  #dev Credentials
+  API_KEY <- "NOkVGjMzYV7IgnGN0QkKspVdv"
+  API_KEY_SECRET <- "27hFxhcEjxZ5zmr4jo05W3aqob15ArF5EhKzmGUoAYaKRLHR00" 
+  ACCESS_TOKEN <- "1161903699855368192-XiP7o9zu5fy7Rp0jTPeVvewAB9yBVA" 
+  ACCESS_TOKEN_SECRET <- "5KSTQkLLKmD2Tblx6zN7rW4cqkpOjk8B3AIjLslK23g61" 
+  
+  setup_twitter_oauth(API_KEY, API_KEY_SECRET, ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
+  
+  
+  # text_df <- sentiment
+  # 
+  # # Calc overall polarity score
+  # text_df %$% polarity(text)
+  # 
+  # # Calc polarity score by person
+  # (datacamp_conversation <- text_df %$% polarity(text, person))
+  # 
+  # # Counts table from datacamp_conversation
+  # counts(datacamp_conversation)
+  # 
+  # # Plot the conversation polarity
+  # plot(datacamp_conversation)
+  
+  
+  options(shiny.maxRequestSize=100*1024^2)
+  
+  obs_data <- observe({
+    req(input$file)
+    if(is.null(input$file)){
+      dataset <<- NULL
+    }
+    else if(grep(".csv",input$file$name)){
+      dataset <<- read.csv(input$file$datapath)
+    }
+    else if(grep(".xlsx",input$file$name)){
+      dataset <<- read.xlsx(input$file$datapath)
+    }
+    
+    output$table <- renderDataTable(dataset, filter = 'top', options= list(pageLength = 10, scrollY = TRUE), selection = list(target = 'column'))
+  })
+  obs_datasubset <- observe({
+    data_subset <<- as.data.frame(dataset[,input$table_columns_selected])
+    data_subset <<- as.data.frame(data_subset[input$table_rows_all,])
+    values <- append(names(data_subset), "None")
+    updateSelectInput(session, "selectX", choices = values, selected = "None")
+    updateSelectInput(session, "selectY", choices = values, selected = "None")
+    updateSelectInput(session, "selectColor", choices = values, selected = "None")
+    updateSelectInput(session, "selectShape", choices = values, selected = "None")
+    updateSelectInput(session, "selectSize", choices = values, selected = "None")
+    updateRadioButtons(session, "checkGroupUni",  selected = "1")
+    updateRadioButtons(session, "checkGroupBi",  selected = "1")
+    updateRadioButtons(session, "checkGroupMulti", selected = "1")
+  })
+  observeEvent(input$loadButton, {
+    data <- twListToDF(searchTwitter(paste0(input$hashtag, " -filter:retweets"), lang = "en", resultType = ,n = as.numeric(input$number)))
+    #data <- twListToDF(searchTwitter(input$hashtag, lang = "en", resultType = ,n = as.numeric(input$number)))
+    data_subset <- data.frame("text" = as.character(removePunctuation(removeNumbers(tolower(data$text)))))
+    iconv(data_subset$text, "UTF-8", "UTF-8",sub='') ## replace any non UTF-8 by ''
+    data_subset$text <- as.character(data_subset$text)
+    for(i in 1:nrow(data_subset)){
+      Encoding(data_subset$text[i]) <- "UTF-8"
+    }
+    data_subset$text <- as.factor(data_subset$text)
+    #datas <<- data_subset
+    str(data_subset)
+
+    sentiments <- polarity(datas$text)
+ 
+    
+    
+    
+    
+    
+    output$table <- renderDataTable(data_subset,options= list(scrollY = TRUE))
+    
+    data_ts <- data %>%
+      mutate(date = substr(as.character(as_datetime(data$created)), 1, 13)) %>%
+      count(date)
+
+    
+    
+    output$plot <- renderPlot(
+      ggplot(data_ts, aes(x = date, y = n)) +
+        geom_line() +
+        labs(x= "time", y= "count") +
+        ggtitle(paste0("Lineplot of frequency of #", input$hashtag))
+    )  
+    
+    
+    
+  })
+  observeEvent(input$startButton, {
+    browser()
+    print("starting")
+    browser()
+    #data_subset %$% polarity(text)
+    #sentiments <- polarity(datas$text)
+    sentiments <- analyzeSentiment(datas)
+    as <- extract_emotion_terms(as.character(datas$text))
+    extract_emotion_terms(as.character(datas$text))
+    browser()
+    #sentiments <- qdap::polarity(data_subset$text)
+  })
+}
+  
+https://www.aclweb.org/anthology/L18-1030.pdf
+
+
+IMDB Movie Reviews Dataset
+
+This large movie dataset contains a collection of about 50,000 movie reviews from IMDB. In this dataset, only highly polarised reviews are being considered. The positive and negative reviews are even in number; however, the negative review has a score of ≤ 4 out of 10, and the positive review has a score of ≥ 7 out of 10.
+  
+  
+  
+  
+  
+#   # Polarity - Grouped
+# student_pol <- conversation %$%
+# polarity(text, student)
+#   # 
+#   # # Student results
+#   # scores(student_pol)
+#   # 
+  # # Sentence by sentence
+  # counts(student_pol)
+  # 
+  # # qdap plot
+  # plot(student_pol)
+  
+  
+  # # Examine the text data
+  # text_df <- data.frame("text" = c("DataCamp courses are the best",
+  #                                  "I like talking to students",
+  #                                  "Other online data science curricula are boring.",
+  #                                  "What is for lunch?",
+  #                                  "DataCamp has lots of great content!",
+  #                                  "Students are passionate and are excited to learn",
+  #                                  "Other data science curriculum is hard to learn and difficult to understand",
+  #                                  "I think the food here is good."))
+  # 
+  # str(text_df)
+  # # Calc overall polarity score
+  # 
+
+#polarity(text_df$text)
+#polarity(datas$text)
+  
+
+shinyApp(ui, server)
+
+
+

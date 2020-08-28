@@ -4,16 +4,16 @@
     "created" : 1588951120990.000,
     "dirty" : false,
     "encoding" : "UTF-8",
-    "folds" : "78|28|82|2|\n84|34|100|2|\n149|35|155|4|\n158|43|168|4|\n171|41|189|4|\n192|40|207|4|\n210|43|219|4|\n222|35|229|4|\n",
+    "folds" : "79|28|83|2|\n85|34|101|2|\n169|35|175|4|\n178|43|188|4|\n212|40|227|4|\n230|43|239|4|\n242|35|249|4|\n",
     "hash" : "0",
     "id" : "FAF50FD7",
-    "lastKnownWriteTime" : 1598168398,
-    "last_content_update" : 1598168398981,
+    "lastKnownWriteTime" : 1598611548,
+    "last_content_update" : 1598611650915,
     "path" : "~/GitHub/Sentiment_App_MBB19/SemiStruk_MBB19/app.R",
     "project_path" : "SemiStruk_MBB19/app.R",
     "properties" : {
-        "cursorPosition" : "82,4",
-        "scrollLine" : "41"
+        "cursorPosition" : "193,52",
+        "scrollLine" : "156"
     },
     "read_only" : false,
     "read_only_alternatives" : [

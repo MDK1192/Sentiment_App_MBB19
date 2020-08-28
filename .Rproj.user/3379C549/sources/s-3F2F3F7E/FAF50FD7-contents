@@ -6,6 +6,7 @@
 #
 #    http://shiny.rstudio.com/
 #
+#importing required libraries
 library(shiny)
 library(twitteR)
 library(shinydashboard)
@@ -138,6 +139,25 @@ server <- function(input, output, session) {
     
     #Perform SentimentAnalysis while performing stemming and stopwords removal in-function-wise
     polarity_text <- analyzeSentiment(tweets_data$Text, language = "english", removeStopwords = TRUE, stemming = TRUE)
+    
+    #adjust polarity score towards wordcount
+    if (polarity_text$WordCount < 10){}
+    else if(polarity_text$WordCount > 11 && polarity_text$WordCount < 15) {polarity_text$SentimentGI <- polarity_text$SentimentGI * 1.5}
+    else if(polarity_text$WordCount > 16 && polarity_text$WordCount < 20) {polarity_text$SentimentGI <- polarity_text$SentimentGI * 2}
+    else if(polarity_text$WordCount > 21 && polarity_text$WordCount < 25) {polarity_text$SentimentGI <- polarity_text$SentimentGI * 2.5}
+    else if(polarity_text$WordCount > 26 && polarity_text$WordCount < 30) {polarity_text$SentimentGI <- polarity_text$SentimentGI * 3.5}
+    else if(polarity_text$WordCount > 31 && polarity_text$WordCount < 50) {polarity_text$SentimentGI <- polarity_text$SentimentGI * 4}
+    else if(polarity_text$WordCount > 51 && polarity_text$WordCount < 100) {polarity_text$SentimentGI <- polarity_text$SentimentGI * 5}
+    else if(polarity_text$WordCount > 101 && polarity_text$WordCount < 150) {polarity_text$SentimentGI <- polarity_text$SentimentGI * 6.5} 
+    else if(polarity_text$WordCount > 151 && polarity_text$WordCount < 200) {polarity_text$SentimentGI <- polarity_text$SentimentGI * 8}
+    else if(polarity_text$WordCount > 201 && polarity_text$WordCount < 250) {polarity_text$SentimentGI <- polarity_text$SentimentGI * 12}
+    else if(polarity_text$WordCount > 251 && polarity_text$WordCount < 300) {polarity_text$SentimentGI <- polarity_text$SentimentGI * 15}
+    else if(polarity_text$WordCount > 301 && polarity_text$WordCount < 350) {polarity_text$SentimentGI <- polarity_text$SentimentGI * 20}
+    else if(polarity_text$WordCount > 351 && polarity_text$WordCount < 400) {polarity_text$SentimentGI <- polarity_text$SentimentGI * 25}
+    if(polarity_text$SentimentGI > 1) polarity_text$SentimentGI <- 1
+    if(polarity_text$SentimentGI < -1) polarity_text$SentimentGI <- -1
+    
+    #filter /select for required information
     polarity_text <- polarity_text[,c(1:4)]
     names(polarity_text) <- c(" WordCount", "Polarity_Overall", "Polarity_Negative", "Polarity_Positive")
     sentiment_text <- extract_emotion_terms(tweets_data$Text, un.as.negation = T)
